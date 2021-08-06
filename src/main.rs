@@ -1,9 +1,13 @@
-mod transcation;
-mod transactions;
+#![feature(option_result_contains)]
+
+mod block;
+mod block_chain;
 mod block_hash;
 mod block_proof;
-mod block;
+mod blocks;
+mod transaction;
+mod transactions;
 
 fn main() {
-    println!("Hello, world!");
+  println!("Hello, world!");
 }
