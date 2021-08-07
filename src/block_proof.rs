@@ -30,7 +30,7 @@ impl BlockProof {
   }
 
   fn validate_proof(last_proof: &BlockProof, proof: &BlockProof) -> bool {
-    let v = vec![last_proof.to_hash(), proof.to_hash()];
+    let v = [last_proof.to_hash(), proof.to_hash()];
     let hash = BlockHash::params(&v).to_hex_string();
     let result = hash.starts_with(&"0".repeat(DIFFICULTY));
     result

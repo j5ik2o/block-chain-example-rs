@@ -32,7 +32,6 @@ pub struct Block {
   timestamp: i64,
   pub(crate) proof: BlockProof,
   data: Vec<u8>,
-  //  transactions: Transactions,
 }
 
 impl Block {
@@ -86,12 +85,11 @@ impl Block {
     timestamp: i64,
     proof: &BlockProof,
   ) -> BlockHash {
-    let v = vec![
+    let v = [
       index.to_hash(),
       prev_hash_opt.clone().unwrap_or(BlockHash::new("")),
       BlockHash::new(timestamp.to_string().as_str()),
       proof.to_hash(),
-      //      transactions.to_hash(),
     ];
     BlockHash::params(&v)
   }
