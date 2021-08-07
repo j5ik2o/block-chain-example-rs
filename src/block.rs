@@ -36,7 +36,6 @@ pub struct Block {
 }
 
 impl Block {
-
   pub fn data(&self) -> Vec<u8> {
     self.data.clone()
   }
@@ -52,24 +51,11 @@ impl Block {
   }
 
   pub fn validate_block(&self, prev_block: &Block) -> bool {
-    println!("p = {:?},\n  n = {:?}", prev_block, self);
     match (prev_block, self) {
-      (p, n) if !n.id.is_valid(&p.id) => {
-        println!("case-1");
-        false
-      }
-      (p, n) if !n.previous_hash.contains(&p.hash()) => {
-        println!("case-2");
-        false
-      }
-      (_, n) if Self::generate_hash_from(&n) != n.hash() => {
-        println!("case-3");
-        false
-      }
-      (p, n) if !n.proof.validate(&p.proof) => {
-        println!("case-4");
-        false
-      }
+      (p, n) if !n.id.is_valid(&p.id) => false,
+      (p, n) if !n.previous_hash.contains(&p.hash()) => false,
+      (_, n) if Self::generate_hash_from(&n) != n.hash() => false,
+      (p, n) if !n.proof.validate(&p.proof) => false,
       _ => true,
     }
   }
@@ -91,7 +77,6 @@ impl Block {
       &block.previous_hash,
       block.timestamp,
       &block.proof,
-      //      &block.transactions,
     )
   }
 

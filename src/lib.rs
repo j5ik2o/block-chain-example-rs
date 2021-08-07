@@ -6,7 +6,3 @@ mod block_chain;
 mod block_hash;
 mod block_proof;
 mod blocks;
-
-fn main() {
-  println!("Hello, world!");
-}
