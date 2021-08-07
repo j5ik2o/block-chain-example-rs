@@ -9,7 +9,7 @@ pub struct BlockId(u64);
 
 pub const GENESIS_BLOCK_ID: BlockId = BlockId(0);
 pub static GENESIS_BLOCK: Lazy<Block> =
-  Lazy::new(|| Block::new_block(BlockProof::genesis_proof(), Vec::<u8>::new(), None));
+  Lazy::new(|| Block::new_block(BlockProof::genesis_proof(), &[], None));
 
 impl BlockId {
   pub fn is_valid(&self, prev_block_id: &Self) -> bool {
@@ -96,7 +96,7 @@ impl Block {
 
   fn new_block(
     proof: BlockProof,
-    data: Vec<u8>,
+    data: &[u8],
     last_block_opt: Option<Block>,
   ) -> Block {
     let now = Utc::now().timestamp_millis();
@@ -105,7 +105,7 @@ impl Block {
         id: GENESIS_BLOCK_ID,
         previous_hash: None,
         timestamp: now,
-        data,
+        data: Vec::from(data),
         proof,
       },
       Some(lb) => {
@@ -113,14 +113,14 @@ impl Block {
           id: lb.id.next(),
           previous_hash: Some(lb.to_hash()),
           timestamp: now,
-          data,
+          data: Vec::from(data),
           proof,
         }
       }
     }
   }
 
-  pub fn new(last_block: Block, proof: BlockProof, data: Vec<u8>) -> Self {
+  pub fn new(last_block: Block, proof: BlockProof, data: &[u8]) -> Self {
     Self::new_block(proof, data, Some(last_block))
   }
 }
@@ -135,7 +135,7 @@ mod tests {
     let a_block = Block::new(
       prev_block.clone(),
       prev_block.clone().proof.next_proof(),
-      Vec::<u8>::new(),
+      &[],
     );
     assert!(a_block.validate(&prev_block))
   }

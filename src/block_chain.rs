@@ -24,7 +24,7 @@ impl BlockChain {
     self.0.size()
   }
 
-  pub fn append_new_block(&mut self, data: Vec<u8>) -> Block {
+  pub fn append_new_block(&mut self, data: &[u8]) -> Block {
     let last_block = self.last_block().clone();
     let proof = last_block.proof.clone().next_proof();
     let new_block = Block::new(last_block, proof, data);
@@ -65,11 +65,8 @@ mod tests {
   fn test_block_chain() {
     let mut block_chain = BlockChain::new();
 
-    let data1 = Vec::from("abc".as_bytes());
-    block_chain.append_new_block(data1);
-
-    let data2 = Vec::from("def".as_bytes());
-    block_chain.append_new_block(data2);
+    block_chain.append_new_block("abc".as_bytes());
+    block_chain.append_new_block("def".as_bytes());
 
     assert!(block_chain.validate())
   }
