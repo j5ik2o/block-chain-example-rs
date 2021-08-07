@@ -4,15 +4,20 @@ use once_cell::sync::Lazy;
 use crate::block_hash::BlockHash;
 use crate::block_proof::BlockProof;
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
-pub struct BlockId(u64);
-
 pub const GENESIS_BLOCK_ID: BlockId = BlockId(0);
 pub static GENESIS_BLOCK: Lazy<Block> =
   Lazy::new(|| Block::new_block(BlockProof::genesis_proof(), &[], None));
 
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
+pub struct BlockId(u64);
+
 impl BlockId {
-  pub fn is_valid(&self, prev_block_id: &Self) -> bool {
+
+  pub fn new(value: u64) -> BlockId {
+    BlockId(value)
+  }
+
+  pub const fn is_valid(&self, prev_block_id: &Self) -> bool {
     self.0 == (prev_block_id.0 + 1)
   }
 
@@ -20,7 +25,7 @@ impl BlockId {
     BlockHash::new(self.0.to_string().as_str())
   }
 
-  pub fn next(&self) -> Self {
+  pub const fn next(&self) -> Self {
     Self(self.0 + 1)
   }
 }
