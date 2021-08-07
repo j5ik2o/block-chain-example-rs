@@ -1,5 +1,4 @@
 use sha2::{Sha256, Digest};
-use itertools::Itertools;
 
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub struct BlockHash(String);
@@ -8,6 +7,7 @@ impl BlockHash {
   pub fn new(value: &str) -> Self {
     Self(String::from(value))
   }
+
   pub fn params(values: &[BlockHash]) -> Self {
     let r = values
       .iter()
@@ -32,6 +32,9 @@ mod tests {
   #[test]
   fn test_hash() {
     let r = BlockHash::new("abc");
-    println!("hash = {:?}", r.to_hex_string());
+    assert_eq!(
+      r.to_hex_string(),
+      "ba7816bf8f1cfea414140de5dae2223b0361a396177a9cb410ff61f2015ad"
+    )
   }
 }

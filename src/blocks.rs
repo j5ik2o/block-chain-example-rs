@@ -1,14 +1,14 @@
-use crate::block::Block;
+use crate::block::{Block, GENESIS_BLOCK};
 use std::cmp::Ordering;
 use crate::block_hash::BlockHash;
 use std::slice::Iter;
 
-#[derive(Debug, Clone)]
-pub struct Blocks(Vec<Block>);
+#[derive(Debug)]
+pub struct Blocks(pub(crate) Vec<Block>);
 
 impl PartialEq for Blocks {
   fn eq(&self, other: &Self) -> bool {
-    self.0.as_slice().partial_cmp(&other.0.as_slice()) == Some(Ordering::Equal)
+    self.0.partial_cmp(&other.0) == Some(Ordering::Equal)
   }
 }
 
@@ -17,27 +17,27 @@ impl Blocks {
     self.0.iter()
   }
 
-  pub fn empty() -> Self {
-    Self(vec![])
+  pub fn new() -> Self {
+    Self(vec![GENESIS_BLOCK.clone()])
   }
 
   pub fn size(&self) -> usize {
     self.0.len()
   }
 
-  pub fn head(&self) -> Block {
-    self.0.first().unwrap().clone()
+  pub fn head(&self) -> &Block {
+    self.0.first().unwrap()
   }
 
-  pub fn last(&self) -> Block {
-    self.0.last().unwrap().clone()
+  pub fn last(&self) -> &Block {
+    self.0.last().unwrap()
   }
 
   pub fn to_hash(&self) -> BlockHash {
     let vec = self
       .0
       .iter()
-      .map(|v| v.hash.clone())
+      .map(|v| v.hash().clone())
       .collect::<Vec<BlockHash>>();
     BlockHash::params(&vec)
   }
@@ -50,5 +50,17 @@ impl Blocks {
 
   pub fn push(&mut self, other: Block) {
     self.0.push(other);
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use crate::blocks::Blocks;
+  use crate::block::GENESIS_BLOCK;
+
+  #[test]
+  fn test_push() {
+    let h = GENESIS_BLOCK.clone();
+    Blocks::new().push(h);
   }
 }

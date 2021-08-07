@@ -1,7 +1,6 @@
-use crate::block::Block;
 use crate::block_hash::BlockHash;
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq, PartialOrd, Copy)]
 pub struct BlockProof(u64);
 
 pub const DIFFICULTY: usize = 1;
@@ -20,13 +19,14 @@ impl BlockProof {
   }
 
   fn proof_of_work(last_proof: BlockProof) -> BlockProof {
-    itertools::iterate(last_proof, |p| p.clone())
+    let result = itertools::iterate(last_proof, |p| p.clone())
       .enumerate()
       .into_iter()
       .filter(|(index, p)| Self::validate_proof(p, &BlockProof(*index as u64)))
       .map(|v| BlockProof(v.0 as u64))
       .next()
-      .unwrap()
+      .unwrap();
+    result
   }
 
   fn validate_proof(last_proof: &BlockProof, proof: &BlockProof) -> bool {
