@@ -36,25 +36,25 @@ pub struct Block {
 }
 
 impl Block {
-  pub fn data(&self) -> Vec<u8> {
-    self.data.clone()
+
+  pub fn as_data(&self) -> &Vec<u8> {
+    &self.data
   }
 
-  pub fn hash(&self) -> BlockHash {
+  pub fn to_hash(&self) -> BlockHash {
     Self::generate_hash(
       &self.id,
       &self.previous_hash,
       self.timestamp,
       &self.proof,
-      //      &self.transactions,
     )
   }
 
   pub fn validate_block(&self, prev_block: &Block) -> bool {
     match (prev_block, self) {
       (p, n) if !n.id.is_valid(&p.id) => false,
-      (p, n) if !n.previous_hash.contains(&p.hash()) => false,
-      (_, n) if Self::generate_hash_from(&n) != n.hash() => false,
+      (p, n) if !n.previous_hash.contains(&p.to_hash()) => false,
+      (_, n) if Self::generate_hash_from(&n) != n.to_hash() => false,
       (p, n) if !n.proof.validate(&p.proof) => false,
       _ => true,
     }
@@ -62,7 +62,7 @@ impl Block {
 
   pub fn validate_hash(&self) -> bool {
     let gen_hash = Self::generate_hash_from(self);
-    gen_hash == self.hash()
+    gen_hash == self.to_hash()
   }
 
   pub fn validate(&self, prev_block: &Self) -> bool {
@@ -85,7 +85,6 @@ impl Block {
     prev_hash_opt: &Option<BlockHash>,
     timestamp: i64,
     proof: &BlockProof,
-    //    transactions: &Transactions,
   ) -> BlockHash {
     let v = vec![
       index.to_hash(),
@@ -100,7 +99,6 @@ impl Block {
   fn new_block(
     proof: BlockProof,
     data: Vec<u8>,
-    //    transactions: Transactions,
     last_block_opt: Option<Block>,
   ) -> Block {
     let now = Utc::now().timestamp_millis();
@@ -113,10 +111,9 @@ impl Block {
         proof,
       },
       Some(lb) => {
-        let id = lb.id.next();
         Self {
-          id: id.clone(),
-          previous_hash: Some(lb.hash()),
+          id: lb.id.next(),
+          previous_hash: Some(lb.to_hash()),
           timestamp: now,
           data,
           proof,

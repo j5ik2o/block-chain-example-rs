@@ -17,7 +17,7 @@ impl BlockHash {
 
   pub fn to_hex_string(&self) -> String {
     let mut hasher = Sha256::new();
-    hasher.update(self.clone().0);
+    hasher.update(self.0.clone());
     let hash = hasher.finalize();
     hash[..]
       .iter()

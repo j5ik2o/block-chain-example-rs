@@ -37,7 +37,7 @@ impl Blocks {
     let vec = self
       .0
       .iter()
-      .map(|v| v.hash().clone())
+      .map(|v| v.to_hash())
       .collect::<Vec<BlockHash>>();
     BlockHash::params(&vec)
   }

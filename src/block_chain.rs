@@ -25,8 +25,8 @@ impl BlockChain {
   }
 
   pub fn append_new_block(&mut self, data: Vec<u8>) -> Block {
-    let proof = self.last_block().proof.clone().next_proof();
     let last_block = self.last_block().clone();
+    let proof = last_block.proof.clone().next_proof();
     let new_block = Block::new(last_block, proof, data);
     self.0.push(new_block.clone());
     new_block
